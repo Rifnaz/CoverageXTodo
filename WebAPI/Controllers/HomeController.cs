@@ -2,6 +2,7 @@
 using ServiceLayer.Interfaces;
 using WebAPI.Models;
 using DbLayer.Data.Models;
+using DbLayer.Helper;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -94,10 +95,10 @@ namespace WebAPI.Controllers
 
 			var result = await _homeService.Add(task);
 
-			if(!result.succeed)
-				return BadRequest(result.message);
+			if(!result.Succeed)
+				return BadRequest(result);
 
-			return Ok(result.message);
+			return Ok(result);
 		}
 
 		/// <summary>
@@ -118,16 +119,15 @@ namespace WebAPI.Controllers
 				Title       = model.Title,
 				Description = model.Description,
 				AddedDate   = model.AddedDate,
-				UpdatedDate = DateTime.Now,
 				OsId        = model.OsId
 			};
 
 			var result = await _homeService.Update(task);
 
-			if (!result.succeed)
-				return BadRequest(result.message);
+			if (!result.Succeed)
+				return BadRequest(result);
 
-			return Ok(result.message);
+			return Ok(result);
 		}
 
 		/// <summary>
@@ -140,10 +140,27 @@ namespace WebAPI.Controllers
 		{
 			var result = await _homeService.Delete(id);
 
-			if(!result.succeed)
-				BadRequest(result.message);
+			if(!result.Succeed)
+				BadRequest(result);
 
-			return Ok(result.message);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="status"></param>
+		/// <returns></returns>
+		[HttpGet("{id}/{status}")]
+		public async Task<IActionResult> UpdateStatus(int id, OStatus status)
+		{		
+			var result = await _homeService.UpdateStatus(id, status);
+
+			if (!result.Succeed)
+				return BadRequest(result);
+
+			return Ok(result);
 		}
 	}
 }

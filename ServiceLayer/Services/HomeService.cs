@@ -1,4 +1,5 @@
 ﻿using DbLayer.Data.Models;
+using DbLayer.Helper;
 using DbLayer.Interfaces;
 using ServiceLayer.Interfaces;
 
@@ -37,10 +38,10 @@ namespace ServiceLayer.Services
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
-		public async Task<(bool succeed, string message)> Add(Tasks task)
+		public async Task<Response> Add(Tasks task)
 		{
 			if(await _homeRepository.IsTitleExist(task.Title))
-				return (false, "Task title already taken.");
+				return new Response(false, "Task title already taken.");
 
 			return await _homeRepository.Add(task);
 		}
@@ -50,10 +51,15 @@ namespace ServiceLayer.Services
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
-		public async Task<(bool succeed, string message)> Update(Tasks task)
+		public async Task<Response> Update(Tasks task)
 		{
-			if (await _homeRepository.IsTitleExist(task.Title))
-				return (false, "Task title already taken.");
+			if (!await _homeRepository.IsTaskExists(task.Id))
+				return new Response(false, "Task not found.");
+
+			var title = await _homeRepository.GetTaskTitleById(task.Id);
+
+			if (title != task.Title && await _homeRepository.IsTitleExist(task.Title))
+				return new Response(false, "Task title already taken.");			
 
 			return await _homeRepository.Update(task);
 		}
@@ -63,12 +69,26 @@ namespace ServiceLayer.Services
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public async Task<(bool succeed, string message)> Delete(int id)
+		public async Task<Response> Delete(int id)
 		{
 			if (!await _homeRepository.IsTaskExists(id))
-				return (false, "Task not found.");
+				return new Response(false, "Task not found.");
 
 			return await _homeRepository.Delete(id);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="status"></param>
+		/// <returns></returns>
+		public async Task<Response> UpdateStatus(int id, OStatus status)
+		{
+			if (!await _homeRepository.IsTaskExists(id))
+				return new Response(false, "Task not found.");
+
+			return await _homeRepository.UpdateStatus(id, status);
 		}
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using DbLayer.Data.Models;
+using DbLayer.Helper;
 
 namespace DbLayer.Interfaces
 {
@@ -22,21 +23,29 @@ namespace DbLayer.Interfaces
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
-		Task<(bool succeed, string message)> Add(Tasks task);
+		Task<Response> Add(Tasks task);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
-		Task<(bool succeed, string message)> Update(Tasks task);
+		Task<Response> Update(Tasks task);
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		Task<(bool succeed, string message)> Delete(int id);
+		Task<Response> Delete(int id);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="status"></param>
+		/// <returns></returns>
+		Task<Response> UpdateStatus(int id, OStatus status);
 
 		/// <summary>
 		/// 
@@ -51,5 +60,12 @@ namespace DbLayer.Interfaces
 		/// <param name="id"></param>
 		/// <returns></returns>
 		Task<bool> IsTaskExists(int id);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		Task<string> GetTaskTitleById(int id);
 	}
 }

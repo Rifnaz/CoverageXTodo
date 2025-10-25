@@ -1,7 +1,9 @@
 ﻿using DbLayer.Data;
 using DbLayer.Data.Models;
+using DbLayer.Helper;
 using DbLayer.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace DbLayer.Repositories
 {
@@ -32,7 +34,7 @@ namespace DbLayer.Repositories
 		{
 			var task = await _dbContext.Tasks.FindAsync(id);
 
-			if(task != null)
+			if (task != null)
 				return task;
 
 			return new Tasks();
@@ -43,7 +45,7 @@ namespace DbLayer.Repositories
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
-		public async Task<(bool succeed, string message)> Add(Tasks task)
+		public async Task<Response> Add(Tasks task)
 		{
 			try
 			{
@@ -51,11 +53,11 @@ namespace DbLayer.Repositories
 
 				await _dbContext.SaveChangesAsync();
 
-				return (true, "Task Added.");
+				return new Response(true, "Task Added.");
 			}
 			catch (Exception ex)
 			{
-				return (false, ex.Message);
+				return new Response(false, ex.Message);
 			}
 		}
 
@@ -64,29 +66,29 @@ namespace DbLayer.Repositories
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
-		public async Task<(bool succeed, string message)> Update(Tasks task)
+		public async Task<Response> Update(Tasks task)
 		{
 			try
 			{
 				var exisitngTask = await _dbContext.Tasks.FindAsync(task.Id);
 
 				if (exisitngTask == null)
-					return (false, "Task not found.");
+					return new Response(false, "Task not found.");
 
-				exisitngTask.Title       = task.Title;
+				exisitngTask.Title = task.Title;
 				exisitngTask.Description = task.Description;
-				exisitngTask.OsId		 = task.OsId;
+				exisitngTask.OsId = task.OsId;
 				exisitngTask.UpdatedDate = DateTime.Now;
 
 				_dbContext.Tasks.Update(exisitngTask);
 
 				await _dbContext.SaveChangesAsync();
 
-				return (true, "Task Updated.");
+				return new Response(true, "Task Updated.");
 			}
 			catch (Exception ex)
 			{
-				return (false, ex.Message);
+				return new Response(false, ex.Message);
 			}
 		}
 
@@ -95,24 +97,54 @@ namespace DbLayer.Repositories
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
-		public async Task<(bool succeed, string message)> Delete(int id)
+		public async Task<Response> Delete(int id)
 		{
 			try
 			{
 				var task = await _dbContext.Tasks.FindAsync(id);
 
 				if (task == null)
-					return (false, "Task not found.");
+					return new Response(false, "Task not found.");
 
 				_dbContext.Tasks.Remove(task);
 
 				await _dbContext.SaveChangesAsync();
 
-				return (true, "Task Deleted.");
+				return new Response(true, "Task Deleted.");
 			}
 			catch (Exception ex)
 			{
-				return (false, ex.Message);
+				return new Response(false, ex.Message);
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="status"></param>
+		/// <returns></returns>
+		public async Task<Response> UpdateStatus(int id, OStatus status)
+		{
+			try
+			{
+				var task = await _dbContext.Tasks.FindAsync(id);
+
+				if (task == null)
+					return new Response(false, "Task not found.");
+
+				task.OsId = (int)status;
+				task.UpdatedDate = DateTime.Now;
+
+				_dbContext.Tasks.Update(task);
+
+				await _dbContext.SaveChangesAsync();
+
+				return new Response(true, "Task Updated.");
+			}
+			catch (Exception ex)
+			{
+				return new Response(false, ex.Message);
 			}
 		}
 
@@ -134,6 +166,16 @@ namespace DbLayer.Repositories
 		public async Task<bool> IsTaskExists(int id)
 		{
 			return await _dbContext.Tasks.AnyAsync(t => t.Id == id);
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		public async Task<string> GetTaskTitleById(int id)
+		{
+			return await _dbContext.Tasks.Where(x => x.Id == id).Select(x => x.Title).FirstOrDefaultAsync();
 		}
 	}
 }
