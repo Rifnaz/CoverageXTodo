@@ -22,7 +22,7 @@ namespace DbLayer.Repositories
 		/// <returns></returns>
 		public async Task<List<Tasks>> GetTasks()
 		{
-			return await _dbContext.Tasks.ToListAsync();
+			return await _dbContext.Tasks.OrderByDescending(x => x.AddedDate).ToListAsync();
 		}
 
 		/// <summary>

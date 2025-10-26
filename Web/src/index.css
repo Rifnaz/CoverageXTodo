@@ -1,68 +1,71 @@
+@import "tailwindcss";
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --primary: 262 83% 58%; 
+  --secondary: 221 83% 58%; 
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+html{
+  scroll-behavior: smooth;
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+    background-color: hsl(240 20% 99%);
+    color: hsl(240 10% 15%);
+    scroll-behavior: smooth;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.bg-gradient-to-r {
+  background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.from-primary {
+  background-image: linear-gradient(to right, hsl(var(--primary)), transparent);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.to-primary {
+  background-image: linear-gradient(to right, transparent, hsl(var(--primary)));
+}
+
+.via-secondary {
+  background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)), hsl(var(--primary)));
+}
+
+.to-secondary {
+  background-image: linear-gradient(to right, transparent, hsl(var(--secondary)));
+}
+
+.border-border {
+    border-color: hsl(240 20% 92%);
+}
+
+
+input:focus-visible{
+  outline-offset: 2px;
+  outline: hsl(var(--primary)) solid 2px;
+}
+
+textarea:focus-visible{
+  outline-offset: 2px;
+  outline: hsl(var(--primary)) solid 2px;
+}
+
+.border-input {
+  border-color: #f0f0f5;
+}
+
+.bg-input{
+  background-color: #f0f0f5;
+}
+
+.bg-light {
+  background-color: #fcfcfd;
+}
+
+.text-primary {
+  color: hsl(var(--primary));
+}
+
+.group:hover .group-hover\:text-primary {
+    color: hsl(var(--primary));
 }

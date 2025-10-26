@@ -152,9 +152,11 @@ namespace WebAPI.Controllers
 		/// <param name="id"></param>
 		/// <param name="status"></param>
 		/// <returns></returns>
-		[HttpGet("{id}/{status}")]
-		public async Task<IActionResult> UpdateStatus(int id, OStatus status)
-		{		
+		[HttpPut("{id}/{osId}")]
+		public async Task<IActionResult> UpdateStatus(int id, int osId)
+		{
+			var status = osId == (int)OStatus.Completed ? OStatus.Pending : OStatus.Completed;
+
 			var result = await _homeService.UpdateStatus(id, status);
 
 			if (!result.Succeed)
