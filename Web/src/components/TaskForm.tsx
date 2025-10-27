@@ -1,15 +1,20 @@
 import { useEffect, useState } from "react";
 import { taskApi } from "../api/taskApi";
-import type { Tasks, OperationalStatus, OsId } from "../types/Tasks";
-import { Plus } from "lucide-react";
+import { type Tasks, OperationalStatusEnum, type OsId } from "../types/Tasks";
+import { Plus, CircleArrowDown, CircleArrowUp } from "lucide-react";
 import TaskCard from "./TaskCard";
 import { toast } from 'react-toastify';
-
+import NoTasks from "./NoTasks";
+import PulseAnime from "./ui/PulseAnime";
+import OsButton from "./ui/OsButton";
 
 const TaskForm = () => {
 
     const [tasks, setTasks] = useState<Tasks[]>([]);
     const [loading, setLoading] = useState(false);
+    const [activeOs, setActiveOs] = useState<OsId>(OperationalStatusEnum.Pending);
+    const [taskExpanded, setTaskExpanded] = useState(false);
+    const [expandLoading, setExpandLoading] = useState(false);
 
     const [frmTask, setFrmTask] = useState<Tasks>({
         id: 0,
@@ -53,7 +58,8 @@ const TaskForm = () => {
 
             clearFields();
             toast.success(res.message);
-            fetchTasks();
+            setActiveOs(OperationalStatusEnum.Pending);
+            fetchTasks(OperationalStatusEnum.Pending);
 
         } catch(error) {
             console.error("Error adding tasks:", error);
@@ -70,7 +76,7 @@ const TaskForm = () => {
             }
 
             toast.success(res.message);
-            fetchTasks();
+            fetchTasks(activeOs);
 
         } catch(error) {
             console.error("Error deleting tasks:", error);
@@ -87,18 +93,29 @@ const TaskForm = () => {
             }
 
             toast.success(res.message);
-            fetchTasks();
+            fetchTasks(activeOs);
 
         } catch(error) {
             console.error("Error updating task:", error);
         }
     }
 
-    const fetchTasks = async () => {
+    const ToggleTaskView = () => {
+        
+        setExpandLoading(true);       
+
+        setTimeout(() => {
+            setExpandLoading(false);
+            setTaskExpanded(!taskExpanded);
+        }, taskExpanded ? 500 : 2000);
+    }
+
+    const fetchTasks = async (osId : OsId) => {
         setLoading(true);
+        setActiveOs(osId);
 
         try {
-            const data = await taskApi.getAll();
+            const data = await taskApi.getByStatus(osId);
             setTasks(data);
 
         } catch (error){
@@ -109,12 +126,12 @@ const TaskForm = () => {
     }
 
     useEffect(() => {
-        fetchTasks();
+        fetchTasks(activeOs);
     }, []);
 
   return (
     <section id="Task" className='max-w-6xl mx-auto px-4 py-12'>
-        <form className='w-full max-w-2xl mx-auto mb-8' onSubmit={handleSubmit}>
+        <form className='w-full max-w-2xl mx-auto mb-5' onSubmit={handleSubmit}>
             <div className='bg-white rounded-2xl p-6 shadow-md border border-border'>
                 <input 
                 type="text" 
@@ -139,9 +156,72 @@ const TaskForm = () => {
         </form>
 
         {loading ? (
-            <p>Loading...</p>
+            <PulseAnime times={5}/>
         ) : (
-            tasks.map((task) => <TaskCard key={task.id} task={task} onDelete={() => handleDelete(task.id)} onOsChange={() => handleStatus(task.id, task.osId)}/>)
+            <>
+                <div className="flex justify-center gap-3 mb-8">
+                    <OsButton 
+                    isActive={OperationalStatusEnum.Pending == activeOs} 
+                    osId={OperationalStatusEnum.Pending} 
+                    onSelect={() => fetchTasks(OperationalStatusEnum.Pending)}/>
+
+                    <OsButton 
+                    isActive={OperationalStatusEnum.Completed == activeOs} 
+                    osId={OperationalStatusEnum.Completed} 
+                    onSelect={() => fetchTasks(OperationalStatusEnum.Completed)}/>
+                </div>
+
+                {
+                    tasks.length > 0 ? (
+                        <>
+                            {
+                                tasks.slice(0, 5).map((task) => (
+                                    <TaskCard 
+                                    key={task.id} 
+                                    task={task} 
+                                    onDelete={() => handleDelete(task.id)} 
+                                    onOsChange={() => handleStatus(task.id, task.osId)}
+                                    />
+                                ))   
+                            }                            
+                            <div>
+                                {expandLoading ? (
+                                  <PulseAnime times={tasks.slice(5).length}/>
+                                ) : (
+                                    taskExpanded ? (
+                                        tasks.slice(5).map((task) => (
+                                        <TaskCard 
+                                        key={task.id} 
+                                        task={task} 
+                                        onDelete={() => handleDelete(task.id)} 
+                                        onOsChange={() => handleStatus(task.id, task.osId)}
+                                        />
+                                    ))
+                                    ) : (<></>)
+                                )
+                                       
+                                }
+                            </div>
+                            {tasks.length > 5 ? (
+                                <div className="flex mt-5 mb-3 flex justify-center items-center">
+                                    <button className="animate-bounce cursor-pointer" onClick={ToggleTaskView}>
+                                        {taskExpanded ? (
+                                            <CircleArrowUp className="w-10 h-10 text-secondary hover:opacity-90"/>
+                                        ): (
+                                            <CircleArrowDown className="w-10 h-10 text-secondary hover:opacity-90"/>
+                                        )}
+                                    </button>
+                                    <p className="font-medium text-gray-500 p-3">
+                                        <span className="text-secondary font-bold">{taskExpanded ? tasks.length : 5}</span> of {tasks.length} tasks
+                                    </p>
+                                </div>
+                            ): (<></>)}
+                        </>              
+                    ) : (
+                        <NoTasks/>
+                    )
+                }
+            </>          
         )}
         
     </section>

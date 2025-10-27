@@ -41,6 +41,18 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
+        /// 
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+		public async Task<List<Tasks>> GetTaskByStatus(OStatus status)
+		{
+			return await _dbContext.Tasks.Where(x => x.OsId == (int)status)
+										 .OrderByDescending(x => x.AddedDate)
+										 .ToListAsync();
+		}
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="task"></param>
@@ -49,6 +61,9 @@ namespace DbLayer.Repositories
 		{
 			try
 			{
+				task.AddedDate = DateTime.Now;
+				task.OsId = (int)OStatus.Pending;
+
 				_dbContext.Tasks.Add(task);
 
 				await _dbContext.SaveChangesAsync();

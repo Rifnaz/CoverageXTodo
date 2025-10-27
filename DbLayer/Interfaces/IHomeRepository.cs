@@ -21,6 +21,13 @@ namespace DbLayer.Interfaces
 		/// <summary>
 		/// 
 		/// </summary>
+		/// <param name="status"></param>
+		/// <returns></returns>
+		Task<List<Tasks>> GetTaskByStatus(OStatus status);
+
+		/// <summary>
+		/// 
+		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
 		Task<Response> Add(Tasks task);

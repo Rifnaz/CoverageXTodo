@@ -12,10 +12,6 @@ namespace WebAPI.Models
 		[Required]
 		public string Description { get; set; }
 
-		public DateTime AddedDate          { get; set; }
-
-		public DateTime? UpdatedDate       { get; set; }
-
 		public int OsId                    { get; set; }
 	}
 }

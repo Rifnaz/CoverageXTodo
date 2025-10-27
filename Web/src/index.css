@@ -19,6 +19,15 @@ body {
   background-image: linear-gradient(to right, hsl(var(--primary)), hsl(var(--secondary)));
 }
 
+.bg-primary {
+  background-color: hsl(var(--primary));
+}
+
+.bg-primary-hover:hover {
+  background-color: hsl(var(--primary));
+  border: none !important;
+}
+
 .from-primary {
   background-image: linear-gradient(to right, hsl(var(--primary)), transparent);
 }
@@ -64,6 +73,14 @@ textarea:focus-visible{
 
 .text-primary {
   color: hsl(var(--primary));
+}
+
+.text-secondary {
+  color: hsl(var(--secondary));
+}
+
+.bg-secondary-20 {
+  background-color: #3b73ed33;
 }
 
 .group:hover .group-hover\:text-primary {

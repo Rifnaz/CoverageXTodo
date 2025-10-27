@@ -3,6 +3,7 @@ using ServiceLayer.Interfaces;
 using WebAPI.Models;
 using DbLayer.Data.Models;
 using DbLayer.Helper;
+using Azure;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -26,26 +27,9 @@ namespace WebAPI.Controllers
 		[HttpGet]
 		public async Task<List<TasksDto>> Get()
 		{
-			var result = new List<TasksDto>();
-
 			var tasks = await _homeService.GetTasks();
 
-			foreach(var task in tasks)
-			{
-				var dto = new TasksDto
-				{
-					Id          = task.Id,
-					Title       = task.Title,
-					Description = task.Description,
-					AddedDate   = task.AddedDate,
-					UpdatedDate = task.UpdatedDate,
-					OsId        = task.OsId
-				};
-
-				result.Add(dto);
-			}
-
-			return result;
+			return await MakeTaskDtoList(tasks);
 		}
 
 		/// <summary>
@@ -58,20 +42,20 @@ namespace WebAPI.Controllers
 		{
 			var task = await _homeService.GetTaskById(id);
 
-			if(task == null)
-				return new TasksDto();
+			return await MakeTaskDto(task);
+		}
 
-			var model = new TasksDto
-			{
-				Id          = task.Id,
-				Title       = task.Title,
-				Description = task.Description,
-				AddedDate   = task.AddedDate,
-				UpdatedDate = task.UpdatedDate,
-				OsId        = task.OsId
-			};
+		/// <summary>
+        /// 
+        /// </summary>
+        /// <param name="osId"></param>
+        /// <returns></returns>
+		[HttpGet("byOs/{osId}")]
+		public async Task<List<TasksDto>> GetByOsId(int osId)
+		{
+			var tasks = await _homeService.GetTaskByStatus((OStatus)osId);
 
-			return model;
+			return await MakeTaskDtoList(tasks);
 		}
 
 		/// <summary>
@@ -85,13 +69,7 @@ namespace WebAPI.Controllers
 			if (!ModelState.IsValid)
 				return BadRequest("Model is not valid");
 
-			var task = new Tasks
-			{
-				Title       = model.Title,
-				Description = model.Description,
-				AddedDate   = DateTime.Now,
-				OsId        = 1
-			};
+			var task = await MakeTask(model);
 
 			var result = await _homeService.Add(task);
 
@@ -113,14 +91,7 @@ namespace WebAPI.Controllers
 			if (!ModelState.IsValid)
 				return BadRequest("Model is not valid");
 
-			var task = new Tasks
-			{
-				Id          = id,
-				Title       = model.Title,
-				Description = model.Description,
-				AddedDate   = model.AddedDate,
-				OsId        = model.OsId
-			};
+			var task = await MakeTask(model);
 
 			var result = await _homeService.Update(task);
 
@@ -164,5 +135,66 @@ namespace WebAPI.Controllers
 
 			return Ok(result);
 		}
+
+		#region Helper Methods
+
+		/// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tasks"></param>
+        /// <returns></returns>
+		private async Task<List<TasksDto>> MakeTaskDtoList(List<Tasks> tasks)
+		{
+			var result = new List<TasksDto>();
+
+			if (tasks != null && tasks.Any())
+			{
+				foreach (var task in tasks)
+				{
+					var dto = await MakeTaskDto(task);
+
+					result.Add(dto);
+				}
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		private async Task<TasksDto> MakeTaskDto(Tasks task)
+		{
+			if (task == null)
+				return new TasksDto();
+
+			return new TasksDto
+			{
+				Id = task.Id,
+				Title = task.Title,
+				Description = task.Description,
+				OsId = task.OsId
+			};
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="task"></param>
+		/// <returns></returns>
+		private async Task<Tasks> MakeTask(TasksDto task)
+		{
+			return new Tasks
+			{
+				Id = task.Id,
+				Title = task.Title,
+				Description = task.Description,
+				OsId = task.OsId
+			};
+		}
+		
+				#endregion
 	}
 }

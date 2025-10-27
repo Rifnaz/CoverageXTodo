@@ -15,6 +15,13 @@ namespace ServiceLayer.Interfaces
 		Task<Tasks> GetTaskById(int id);
 
 		/// <summary>
+        /// 
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+		Task<List<Tasks>> GetTaskByStatus(OStatus status);
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="task"></param>

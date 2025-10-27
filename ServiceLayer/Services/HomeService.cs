@@ -34,6 +34,16 @@ namespace ServiceLayer.Services
 		}
 
 		/// <summary>
+        /// 
+        /// </summary>
+        /// <param name="status"></param>
+        /// <returns></returns>
+		public async Task<List<Tasks>> GetTaskByStatus(OStatus status)
+		{
+			return await _homeRepository.GetTaskByStatus(status);
+		}
+
+		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="task"></param>
