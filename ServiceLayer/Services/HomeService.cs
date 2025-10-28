@@ -15,7 +15,7 @@ namespace ServiceLayer.Services
 		}
 
 		/// <summary>
-		/// 
+		/// Get all tasks
 		/// </summary>
 		/// <returns></returns>
 		public async Task<List<Tasks>> GetTasks()
@@ -24,7 +24,7 @@ namespace ServiceLayer.Services
 		}
 
 		/// <summary>
-		/// 
+		/// Get task by id
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -34,17 +34,17 @@ namespace ServiceLayer.Services
 		}
 
 		/// <summary>
-        /// 
-        /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
+		/// Get task by status
+		/// </summary>
+		/// <param name="status"></param>
+		/// <returns></returns>
 		public async Task<List<Tasks>> GetTaskByStatus(OStatus status)
 		{
 			return await _homeRepository.GetTaskByStatus(status);
 		}
 
 		/// <summary>
-		/// 
+		/// Add new task if title not exist otherwise return error response
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
@@ -57,7 +57,7 @@ namespace ServiceLayer.Services
 		}
 
 		/// <summary>
-		/// 
+		/// Update task if exists and title not taken otherwise return error response
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
@@ -75,7 +75,7 @@ namespace ServiceLayer.Services
 		}
 
 		/// <summary>
-		/// 
+		/// Delete task if exists otherwise return error response
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -88,7 +88,7 @@ namespace ServiceLayer.Services
 		}
 
 		/// <summary>
-		/// 
+		/// Update task status if exists otherwise return error response
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="status"></param>

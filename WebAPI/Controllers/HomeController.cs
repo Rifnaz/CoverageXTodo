@@ -3,9 +3,6 @@ using ServiceLayer.Interfaces;
 using WebAPI.Models;
 using DbLayer.Data.Models;
 using DbLayer.Helper;
-using Azure;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace WebAPI.Controllers
 {
@@ -21,7 +18,7 @@ namespace WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// 
+		/// Get all tasks
 		/// </summary>
 		/// <returns></returns>
 		[HttpGet]
@@ -33,7 +30,7 @@ namespace WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// 
+		/// Get task by id
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -46,10 +43,10 @@ namespace WebAPI.Controllers
 		}
 
 		/// <summary>
-        /// 
-        /// </summary>
-        /// <param name="osId"></param>
-        /// <returns></returns>
+		/// Get task by os id and convert to OStatus
+		/// </summary>
+		/// <param name="osId"></param>
+		/// <returns></returns>
 		[HttpGet("byOs/{osId}")]
 		public async Task<List<TasksDto>> GetByOsId(int osId)
 		{
@@ -59,7 +56,7 @@ namespace WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// 
+		/// Add new task if title not exist otherwise return error response
 		/// </summary>
 		/// <param name="model"></param>
 		/// <returns></returns>
@@ -80,7 +77,7 @@ namespace WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// 
+		/// Update task if exists and title not taken otherwise return error response
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="model"></param>
@@ -102,7 +99,7 @@ namespace WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// 
+		/// Delete task by id if exists 
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -118,10 +115,10 @@ namespace WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// 
+		/// Update task status by id if exists (toggle between Pending and Completed status)
 		/// </summary>
 		/// <param name="id"></param>
-		/// <param name="status"></param>
+		/// <param name="osId"></param>
 		/// <returns></returns>
 		[HttpPut("{id}/{osId}")]
 		public async Task<IActionResult> UpdateStatus(int id, int osId)
@@ -139,10 +136,10 @@ namespace WebAPI.Controllers
 		#region Helper Methods
 
 		/// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tasks"></param>
-        /// <returns></returns>
+		/// Map list of Tasks to list of TasksDto
+		/// </summary>
+		/// <param name="tasks"></param>
+		/// <returns></returns>
 		private async Task<List<TasksDto>> MakeTaskDtoList(List<Tasks> tasks)
 		{
 			var result = new List<TasksDto>();
@@ -161,7 +158,7 @@ namespace WebAPI.Controllers
 		}
 
 		/// <summary>
-		/// 
+		/// Map Tasks to TasksDto
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
@@ -172,15 +169,15 @@ namespace WebAPI.Controllers
 
 			return new TasksDto
 			{
-				Id = task.Id,
-				Title = task.Title,
+				Id          = task.Id,
+				Title       = task.Title,
 				Description = task.Description,
-				OsId = task.OsId
+				OsId        = task.OsId
 			};
 		}
 
 		/// <summary>
-		/// 
+		/// Map TasksDto to Tasks
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
@@ -188,10 +185,10 @@ namespace WebAPI.Controllers
 		{
 			return new Tasks
 			{
-				Id = task.Id,
-				Title = task.Title,
+				Id          = task.Id,
+				Title       = task.Title,
 				Description = task.Description,
-				OsId = task.OsId
+				OsId        = task.OsId
 			};
 		}
 		

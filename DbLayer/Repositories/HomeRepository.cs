@@ -17,7 +17,7 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
-		/// 
+		/// Get all tasks ordered by AddedDate descending (latest on top)
 		/// </summary>
 		/// <returns></returns>
 		public async Task<List<Tasks>> GetTasks()
@@ -26,7 +26,7 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
-		/// 
+		/// Get task by Id if exists else return new Tasks object
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -41,10 +41,10 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
-        /// 
-        /// </summary>
-        /// <param name="status"></param>
-        /// <returns></returns>
+		/// Get tasks by status ordered by AddedDate descending (latest on top)
+		/// </summary>
+		/// <param name="status"></param>
+		/// <returns></returns>
 		public async Task<List<Tasks>> GetTaskByStatus(OStatus status)
 		{
 			return await _dbContext.Tasks.Where(x => x.OsId == (int)status)
@@ -53,7 +53,7 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
-		/// 
+		/// Add new task to database with current date time as AddedDate and Pending as status
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
@@ -62,7 +62,7 @@ namespace DbLayer.Repositories
 			try
 			{
 				task.AddedDate = DateTime.Now;
-				task.OsId = (int)OStatus.Pending;
+				task.OsId      = (int)OStatus.Pending;
 
 				_dbContext.Tasks.Add(task);
 
@@ -77,7 +77,7 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
-		/// 
+		/// Update task if exists by Id and new details
 		/// </summary>
 		/// <param name="task"></param>
 		/// <returns></returns>
@@ -90,9 +90,9 @@ namespace DbLayer.Repositories
 				if (exisitngTask == null)
 					return new Response(false, "Task not found.");
 
-				exisitngTask.Title = task.Title;
+				exisitngTask.Title       = task.Title;
 				exisitngTask.Description = task.Description;
-				exisitngTask.OsId = task.OsId;
+				exisitngTask.OsId        = task.OsId;
 				exisitngTask.UpdatedDate = DateTime.Now;
 
 				_dbContext.Tasks.Update(exisitngTask);
@@ -108,7 +108,7 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
-		/// 
+		/// Delete task by id if exists
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -134,7 +134,7 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
-		/// 
+		/// Update task status by Id and status and set UpdatedDate to current date time
 		/// </summary>
 		/// <param name="id"></param>
 		/// <param name="status"></param>
@@ -148,7 +148,7 @@ namespace DbLayer.Repositories
 				if (task == null)
 					return new Response(false, "Task not found.");
 
-				task.OsId = (int)status;
+				task.OsId        = (int)status;
 				task.UpdatedDate = DateTime.Now;
 
 				_dbContext.Tasks.Update(task);
@@ -164,7 +164,7 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
-		/// 
+		/// Check if Title already exists
 		/// </summary>
 		/// <param name="title"></param>
 		/// <returns></returns>
@@ -174,7 +174,7 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
-		/// 
+		/// Check if Task exists by Id
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
@@ -184,7 +184,7 @@ namespace DbLayer.Repositories
 		}
 
 		/// <summary>
-		/// 
+		/// Get Task Title by Id
 		/// </summary>
 		/// <param name="id"></param>
 		/// <returns></returns>
