@@ -1,0 +1,38 @@
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: todo-db
+    environment:
+      SA_PASSWORD: "Welcome@123456"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - todo-net
+
+  api:
+    build: 
+      context: .
+      dockerfile: WebAPI/Dockerfile
+    depends_on:
+      - db
+    environment:
+        - ConnectionStrings__DefaultConnection=Server=db;Database=CovergeXTodo;User Id=sa;Password=Welcome@123456;TrustServerCertificate=True
+    ports:
+      - "5000:5000"
+    networks:
+      - todo-net
+
+  web:
+    build: ./Web
+    depends_on:
+      - api
+    ports:
+      - "3000:80"
+    networks:
+      - todo-net
+
+networks:
+  todo-net:
+    driver: bridge

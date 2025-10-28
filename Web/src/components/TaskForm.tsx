@@ -114,15 +114,17 @@ const TaskForm = () => {
         setLoading(true);
         setActiveOs(osId);
 
-        try {
-            const data = await taskApi.getByStatus(osId);
-            setTasks(data);
+        setTimeout(async () => {
+            try {
+                const data = await taskApi.getByStatus(osId);
+                setTasks(data);
 
-        } catch (error){
-            console.error("Error fetching tasks:", error);
-        } finally {
-            setLoading(false);
-        }
+            } catch (error){
+                console.error("Error fetching tasks:", error);
+            } finally {
+                setLoading(false);
+            }
+        }, 1000);
     }
 
     useEffect(() => {

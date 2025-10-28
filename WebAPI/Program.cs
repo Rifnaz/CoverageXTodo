@@ -1,18 +1,20 @@
-using DbLayer;
+﻿using DbLayer;
 using DbLayer.Data;
 using Microsoft.EntityFrameworkCore;
 using ServiceLayer;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5000); // <-- make sure this port matches docker-compose
+});
+
 // Add services to the container.
 builder.Services.AddDataAccessServices(builder.Configuration);
 builder.Services.AddBusinessLogicServices(builder.Configuration);
 
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
@@ -20,48 +22,30 @@ builder.Services.AddSwaggerGen();
 // Add CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    options.AddPolicy("AllowReactApp",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
 });
 
 var app = builder.Build();
 
-app.UseCors("AllowAll");
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-	app.MapOpenApi();
-}
+app.UseRouting();
+app.UseCors("AllowReactApp");
 
 if (app.Environment.IsDevelopment())
 {
+    app.UseDeveloperExceptionPage();
     app.UseSwagger();
     app.UseSwaggerUI();
 };
 
-app.UseHttpsRedirection();
-
 app.UseAuthorization();
-
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-	var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-	try
-	{
-		db.Database.Migrate();
-	}
-	catch (Exception ex)
-	{
-		Console.WriteLine($"Migration failed: {ex.Message}");
-	}
-}
+DbInitializer.Initialize(app.Services);
 
 app.Run();

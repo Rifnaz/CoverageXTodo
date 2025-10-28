@@ -1,5 +1,6 @@
 ﻿using DbLayer.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace DbLayer.Data
 {
@@ -15,12 +16,6 @@ namespace DbLayer.Data
 
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
-			//builder.Entity<Tasks>()
-			//	.HasOne(t => t.Status)
-			//	.WithMany(s => s.Tasks)
-			//	.HasForeignKey(t => t.OsId);
-
-
 			base.OnModelCreating(builder);
 		}
 	}

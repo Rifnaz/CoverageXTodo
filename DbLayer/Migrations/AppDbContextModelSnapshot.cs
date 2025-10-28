@@ -46,7 +46,7 @@ namespace DbLayer.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("OperationalStatuses");
+                    b.ToTable("OperationalStatuses", (string)null);
                 });
 
             modelBuilder.Entity("DbLayer.Data.Models.Tasks", b =>
@@ -78,7 +78,7 @@ namespace DbLayer.Migrations
 
                     b.HasIndex("OsId");
 
-                    b.ToTable("Tasks");
+                    b.ToTable("Tasks", (string)null);
                 });
 
             modelBuilder.Entity("DbLayer.Data.Models.Tasks", b =>

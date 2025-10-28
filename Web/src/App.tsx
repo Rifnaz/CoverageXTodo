@@ -1,5 +1,5 @@
-import Index from "./pages"
-import { ToastContainer, toast } from 'react-toastify';
+import Index from './pages/Index';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
 
